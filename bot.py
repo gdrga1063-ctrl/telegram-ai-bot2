@@ -1,61 +1,56 @@
-import logging
 import os
-
+import logging
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
+    CommandHandler,
     MessageHandler,
     ContextTypes,
-    CommandHandler,
     filters,
 )
 
-from main import ai_generate, state, remember, update_state, dialog_memory
-
-# --- НАСТРОЙКИ ---
-TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")  # ← ВАЖНО
-
+# --- ЛОГИ ---
 logging.basicConfig(level=logging.INFO)
 
+TOKEN = os.getenv("BOT_TOKEN")
 
-# --- ОБРАБОТКА СООБЩЕНИЙ ---
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_input = update.message.text
+# Railway сам даёт PORT
+PORT = int(os.environ.get("PORT", 8000))
 
-    remember(user_input)
-    update_state(state, user_input)
-
-    reply = ai_generate(user_input, state)
-
-    if not reply:
-        reply = "..."
-
-    dialog_memory.append(user_input)
-    dialog_memory.append(reply)
-
-    if len(dialog_memory) > 6:
-        dialog_memory.pop(0)
-
-    await update.message.reply_text(reply)
-
-
+# --- ОБРАБОТЧИКИ ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Я здесь.")
 
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    print("Сообщение:", text)
+
+    reply = f"Ты сказал: {text}"
+    await update.message.reply_text(reply)
 
 # --- ЗАПУСК ---
 def main():
-    if not TOKEN:
-        raise ValueError("BOT_TOKEN не найден! Добавь его в Railway Variables")
-
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    print("Бот запущен...")
-    app.run_polling()
+    # ВАЖНО: Railway URL
+    WEBHOOK_URL = os.getenv("RAILWAY_STATIC_URL")
 
+    if not WEBHOOK_URL:
+        print("❌ Нет RAILWAY_STATIC_URL")
+        return
+
+    WEBHOOK_URL = f"https://{WEBHOOK_URL}"
+
+    print("Webhook:", WEBHOOK_URL)
+
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        webhook_url=WEBHOOK_URL,
+    )
 
 if __name__ == "__main__":
     main()
