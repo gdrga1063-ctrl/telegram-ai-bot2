@@ -267,31 +267,5 @@ if __name__ == "__main__":
 
 # --- ОСНОВНОЙ ЦИКЛ --- был
 if __name__ == "__main__":
-    while True:
-        user_typing = True
-        user_input = input()
-        user_typing = False
-
-        save_memory("Пользователь: " + user_input)
-
-        remember(user_input)
-        update_state(state, user_input)
-
-        if should_reply(state):
-            reply = ai_generate(user_input, state)
-
-            if reply is None:
-                reply = "..."
-
-            print("ИИ:", reply)
-
-            save_memory("ИИ: " + reply)
-
-            dialog_memory.append(reply)
-            if len(dialog_memory) > 5:
-                dialog_memory.pop(0)
-
-        message_count += 1
-
-        if message_count % 5 == 0:
+    print("Запуск через Telegram-бота. Консольный режим отключён.")
             write_diary(state)
