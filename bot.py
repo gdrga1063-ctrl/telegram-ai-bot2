@@ -1,5 +1,6 @@
 import logging
 import requests
+import os
 
 from telegram import Update
 from telegram.ext import (
@@ -14,7 +15,7 @@ from telegram.request import HTTPXRequest
 from main import ai_generate, state, remember, update_state, dialog_memory
 
 # --- НАСТРОЙКИ ---
-TOKEN = "8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno"
+TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")
 PROXY_URL = "socks5://107.173.123.87:10808"
 
 logging.basicConfig(level=logging.INFO)
