@@ -90,7 +90,7 @@ def write_diary(state):
 
 # --- ОБНОВЛЕНИЕ СОСТОЯНИЯ ---
 def update_state(state, user_input):
-    
+    text = user_input.lower()
 
     if "привет" in text:
         state["mood"] += 0.3
