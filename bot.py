@@ -1,53 +1,62 @@
-import os
 import logging
+import os
+
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
-    CommandHandler,
     MessageHandler,
     ContextTypes,
+    CommandHandler,
     filters,
 )
 
+from main import ai_generate, state, remember, update_state, dialog_memory
+
+# --- ТОКЕН ---
+TOKEN = os.getenv("BOT_TOKEN")
+
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")
-PORT = int(os.environ.get("PORT", 8000))
-WEBHOOK_URL = os.getenv("RAILWAY_STATIC_URL")
+
+# --- ОБРАБОТКА ---
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        user_input = update.message.text
+
+        remember(user_input)
+        update_state(state, user_input)
+
+        reply = ai_generate(user_input, state)
+
+        if not reply:
+            reply = "..."
+
+        dialog_memory.append(user_input)
+        dialog_memory.append(reply)
+
+        if len(dialog_memory) > 6:
+            dialog_memory.pop(0)
+
+        await update.message.reply_text(reply)
+
+    except Exception as e:
+        print("Ошибка:", e)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Я здесь.")
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    print("Сообщение:", text)
-    await update.message.reply_text(f"Ты сказал: {text}")
 
+# --- ЗАПУСК ---
 def main():
-    print("=== СТАРТ БОТА ===")
-
-    if not TOKEN:
-        print("❌ Нет BOT_TOKEN")
-        return
-
-    if not WEBHOOK_URL:
-        print("❌ Нет RAILWAY_STATIC_URL")
-        return
-
-    WEBHOOK_URL_FULL = f"https://{WEBHOOK_URL}"
-    print("Webhook URL:", WEBHOOK_URL_FULL)
-    print("Port:", PORT)
-
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=WEBHOOK_URL_FULL,
-    )
+    print("Бот запущен...")
+    app.run_polling()
+
 
 if __name__ == "__main__":
     main()
