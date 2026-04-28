@@ -1,5 +1,4 @@
 import logging
-import requests
 import os
 
 from telegram import Update
@@ -10,28 +9,13 @@ from telegram.ext import (
     CommandHandler,
     filters,
 )
-from telegram.request import HTTPXRequest
 
 from main import ai_generate, state, remember, update_state, dialog_memory
 
 # --- НАСТРОЙКИ ---
-TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")
-PROXY_URL = "socks5://107.173.123.87:10808"
+TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")  # ← ВАЖНО
 
 logging.basicConfig(level=logging.INFO)
-
-# --- ПРОВЕРКА ПРОКСИ ---
-def check_proxy():
-    try:
-        proxies = {
-            "http": PROXY_URL,
-            "https": PROXY_URL
-        }
-
-        r = requests.get("https://api.telegram.org", proxies=proxies, timeout=10)
-        print("Прокси работает:", r.status_code)
-    except Exception as e:
-        print("Прокси НЕ работает:", e)
 
 
 # --- ОБРАБОТКА СООБЩЕНИЙ ---
@@ -61,14 +45,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- ЗАПУСК ---
 def main():
-    check_proxy()
+    if not TOKEN:
+        raise ValueError("BOT_TOKEN не найден! Добавь его в Railway Variables")
 
-    request = HTTPXRequest(proxy_url=PROXY_URL)
-
-    app = ApplicationBuilder() \
-        .token(TOKEN) \
-        .request(request) \
-        .build()
+    app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
