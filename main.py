@@ -26,9 +26,10 @@ message_count = 0
 def save_memory(text):
     with open("memory.txt", "a", encoding="utf-8") as f:
         f.write(text + "\n")
-
+        
 def ai_generate(user_input, state):
-    return f"Ты сказал: {user_input}"
+    return f"Ты сказал: {user_input}. Интересно."
+    
 def autonomous_behavior():
     while True:
         try:
