@@ -21,6 +21,29 @@ dialog_memory = []
 memory_keywords = {}  # "воспоминания"
 message_count = 0
 
+def main():
+    print("=== СТАРТ БОТА ===")
+
+    print("TOKEN:", bool(TOKEN))
+    print("RAILWAY_STATIC_URL:", WEBHOOK_URL)
+
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    if WEBHOOK_URL:
+        WEBHOOK_URL_FULL = f"https://{WEBHOOK_URL}"
+        print("Webhook:", WEBHOOK_URL_FULL)
+
+        app.run_webhook(
+            listen="0.0.0.0",
+            port=PORT,
+            webhook_url=WEBHOOK_URL_FULL,
+        )
+    else:
+        print("⚠️ Нет домена — запускаю polling (для теста)")
+        app.run_polling()
 
 # --- ПАМЯТЬ ---
 def save_memory(text):
