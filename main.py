@@ -28,55 +28,7 @@ def save_memory(text):
         f.write(text + "\n")
 
 def ai_generate(user_input, state):
-    mood = state["mood"]
-
-    memory = ", ".join(list(memory_keywords.keys())[-5:])
-
-    context = "\n".join(dialog_memory[-3:])  # последние сообщения
-
-    prompt = f"""
-Ты не помощник.
-Ты — странный ИИ, который только учится общаться.
-
-Ты помнишь слова: {memory}
-
-Последний диалог:
-{context}
-
-Твоё настроение: {mood}
-
-Правила:
-- отвечай коротко
-- иногда странно
-- не повторяй одно и то же слово
-- не говори "чем могу помочь"
-- иногда игнорируй вопрос
-
-Пользователь: {user_input}
-ИИ:
-"""
-
-    try:
-        response = requests.post(
-            "http://localhost:11434/api/generate",
-            json={
-                "model": "qwen2.5",
-                "prompt": prompt,
-                "stream": False
-            }
-        )
-
-        text = response.json()["response"].strip()
-
-        if not text:
-            return "..."
-
-        return text
-
-    except Exception as e:
-        print("Ошибка:", e)
-        return "..."
-
+    return f"Ты сказал: {user_input}"
 def autonomous_behavior():
     while True:
         try:
