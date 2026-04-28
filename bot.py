@@ -9,47 +9,44 @@ from telegram.ext import (
     filters,
 )
 
-# --- ЛОГИ ---
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = os.getenv("BOT_TOKEN")
-
-# Railway сам даёт PORT
+TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")
 PORT = int(os.environ.get("PORT", 8000))
+WEBHOOK_URL = os.getenv("RAILWAY_STATIC_URL")
 
-# --- ОБРАБОТЧИКИ ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Я здесь.")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
     print("Сообщение:", text)
+    await update.message.reply_text(f"Ты сказал: {text}")
 
-    reply = f"Ты сказал: {text}"
-    await update.message.reply_text(reply)
-
-# --- ЗАПУСК ---
 def main():
-    app = ApplicationBuilder().token(TOKEN).build()
+    print("=== СТАРТ БОТА ===")
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-
-    # ВАЖНО: Railway URL
-    WEBHOOK_URL = os.getenv("RAILWAY_STATIC_URL")
+    if not TOKEN:
+        print("❌ Нет BOT_TOKEN")
+        return
 
     if not WEBHOOK_URL:
         print("❌ Нет RAILWAY_STATIC_URL")
         return
 
-    WEBHOOK_URL = f"https://{WEBHOOK_URL}"
+    WEBHOOK_URL_FULL = f"https://{WEBHOOK_URL}"
+    print("Webhook URL:", WEBHOOK_URL_FULL)
+    print("Port:", PORT)
 
-    print("Webhook:", WEBHOOK_URL)
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        webhook_url=WEBHOOK_URL,
+        webhook_url=WEBHOOK_URL_FULL,
     )
 
 if __name__ == "__main__":
