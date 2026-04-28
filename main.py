@@ -267,5 +267,4 @@ if __name__ == "__main__":
 
 # --- ОСНОВНОЙ ЦИКЛ --- был
 if __name__ == "__main__":
-    print("Запуск через Telegram-бота. Консольный режим отключён.")
-            write_diary(state)
+    pass
