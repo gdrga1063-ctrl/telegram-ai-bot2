@@ -289,6 +289,3 @@ if __name__ == "__main__":
     thread = threading.Thread(target=autonomous_behavior, daemon=True)
     thread.start()
 
-# --- ОСНОВНОЙ ЦИКЛ --- был
-if __name__ == "__main__":
-    print("Модуль main загружен")
