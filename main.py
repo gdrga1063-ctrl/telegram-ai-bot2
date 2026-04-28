@@ -20,6 +20,7 @@ state = {
 dialog_memory = []
 memory_keywords = {}  # "воспоминания"
 message_count = 0
+user_typing = False
 
 # --- ПАМЯТЬ ---
 def save_memory(text):
