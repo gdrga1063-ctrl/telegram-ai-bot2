@@ -95,7 +95,7 @@ def ai_generate(user_input, state):
                 "Content-Type": "application/json"
             },
             json={
-    "model": "Qwen: Qwen3.5-9B",
+    "model": "qwen/qwen-2.5-14b-instruct",
     "messages": [
         {"role": "system", "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."},
         {"role": "user", "content": user_input}
