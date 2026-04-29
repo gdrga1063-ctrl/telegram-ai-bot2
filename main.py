@@ -97,18 +97,14 @@ def ai_generate(user_input, state):
             json={
                 "model": "qwen/qwen2.5:free",
                 "messages": [
-                    {
-                        "role": "system",
-                        "content": "Ты странный, немного живой ИИ. Отвечай коротко, иногда странно."
-                    },
-                    {
-                        "role": "user",
-                        "content": user_input
-                    }
+                    {"role": "user", "content": user_input}
                 ]
             },
             timeout=15
         )
+
+        print("STATUS:", response.status_code)
+        print("TEXT:", response.text)
 
         data = response.json()
 
@@ -116,6 +112,6 @@ def ai_generate(user_input, state):
 
     except Exception as e:
         print("Ошибка API:", e)
-        return "..."
+        return "Ошибка API, смотри логи"
 
     return sentence
