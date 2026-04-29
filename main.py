@@ -1,4 +1,6 @@
 import random
+import os
+import requests
 
 # --- ХАРАКТЕР ---
 personality = {
@@ -85,52 +87,35 @@ def get_memory_word():
 
 # --- ГЕНЕРАЦИЯ ---
 def ai_generate(user_input, state):
-    parts = []
+    try:
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "qwen/qwen2.5:free",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Ты странный, немного живой ИИ. Отвечай коротко, иногда странно."
+                    },
+                    {
+                        "role": "user",
+                        "content": user_input
+                    }
+                ]
+            },
+            timeout=15
+        )
 
-    # эмоция
-    if personality["emotionality"] > 0.6:
-        parts.append(random.choice([
-            "Это интересно",
-            "Мне нравится",
-            "Любопытно"
-        ]))
-    else:
-        parts.append(random.choice([
-            "Хм",
-            "Возможно",
-            "Понятно"
-        ]))
+        data = response.json()
 
-    # действие
-    if personality["curiosity"] > 0.6:
-        parts.append(random.choice([
-            "я думаю о",
-            "мне хочется понять",
-            "я размышляю о"
-        ]))
-    else:
-        parts.append("я думаю о")
+        return data["choices"][0]["message"]["content"]
 
-    # тема
-    word = get_context_word() or get_memory_word()
-
-    if not word:
-        return random.choice([
-            "Интересно, расскажи подробнее",
-            "Я не до конца понял, но звучит любопытно",
-            "Можешь объяснить чуть больше?"
-        ])
-
-    parts.append(word)
-
-    sentence = " ".join(parts)
-
-    # разговорчивость
-    if personality["talkativeness"] > 0.6:
-        sentence += random.choice([
-            ". Это заставляет меня задуматься.",
-            ". Интересно, как это связано.",
-            ". Возможно, в этом есть смысл."
-        ])
+    except Exception as e:
+        print("Ошибка API:", e)
+        return "..."
 
     return sentence
