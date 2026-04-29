@@ -95,7 +95,7 @@ def ai_generate(user_input, state):
                 "Content-Type": "application/json"
             },
             json={
-    "model": "qwen/qwen3.5-397b-a17b",
+    "model": "mistralai/mistral-7b-instruct",
     "messages": [
         {"role": "system", "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."},
         {"role": "user", "content": user_input}
@@ -109,9 +109,9 @@ def ai_generate(user_input, state):
 
         data = response.json()
 
-        if "choices" not in data:
-            print("❌ API ERROR:", data)
-            return "Ошибка модели"
+        if "error" in data:
+            print("❌ API ERROR:", data["error"]["message"])
+            return f"API ошибка: {data['error']['message']}"
         
         return data["choices"][0]["message"]["content"]
 
