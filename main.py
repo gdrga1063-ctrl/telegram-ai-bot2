@@ -63,8 +63,15 @@ def get_context_word():
     if not dialog_memory:
         return None
 
-    last = random.choice(dialog_memory)
-    words = [clean_word(w) for w in last.split() if len(clean_word(w)) > 4]
+    last = dialog_memory[-1]  # последнее сообщение (важно!)
+    words = last.split()
+
+    words = [
+        clean_word(w)
+        for w in words
+        if len(clean_word(w)) > 4
+        and clean_word(w) not in ["круто", "ладно", "понял", "привет"]
+    ]
 
     return random.choice(words) if words else None
 
@@ -105,7 +112,14 @@ def ai_generate(user_input, state):
         parts.append("я думаю о")
 
     # тема
-    word = get_context_word() or get_memory_word() or "этом"
+    word = get_context_word() or get_memory_word()
+
+if not word:
+    return random.choice([
+        "Интересно, расскажи подробнее",
+        "Я не до конца понял, но звучит любопытно",
+        "Можешь объяснить чуть больше?"
+    ])
     parts.append(word)
 
     sentence = " ".join(parts)
