@@ -95,7 +95,7 @@ def ai_generate(user_input, state):
                 "Content-Type": "application/json"
             },
             json={
-    "model": "openai/gpt-3.5-turbo",
+    "model": "qwen/qwen3.5-397b-a17b",
     "messages": [
         {"role": "system", "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."},
         {"role": "user", "content": user_input}
