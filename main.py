@@ -107,13 +107,13 @@ def ai_generate(user_input, state):
         print("STATUS:", response.status_code)
         print("TEXT:", response.text)
 
-        data = response.json()
+data = response.json()
 
-          if "choices" not in data:
-            print("❌ API ERROR:", data)
-            return "Ошибка модели"
+if "choices" not in data:
+    print("❌ API ERROR:", data)
+    return "Ошибка модели"
 
-           return data["choices"][0]["message"]["content"]
+return data["choices"][0]["message"]["content"]
 
     except Exception as e:
         print("Ошибка API:", e)
