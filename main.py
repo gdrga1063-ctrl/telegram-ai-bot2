@@ -120,7 +120,7 @@ if not word:
         "Я не до конца понял, но звучит любопытно",
         "Можешь объяснить чуть больше?"
     ])
-    parts.append(word)
+parts.append(word)
 
     sentence = " ".join(parts)
 
