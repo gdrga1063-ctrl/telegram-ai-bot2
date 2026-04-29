@@ -13,7 +13,7 @@ from telegram.ext import (
 from main import ai_generate, state, remember, update_state, dialog_memory
 
 # --- ТОКЕН ---
-TOKEN = os.getenv("8207302663:AAG46mdKUzQnpEaCVbDbTDgzpijO6sX3rno")
+TOKEN = os.getenv("BOT_TOKEN")
 
 logging.basicConfig(level=logging.INFO)
 
