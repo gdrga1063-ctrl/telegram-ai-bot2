@@ -95,10 +95,11 @@ def ai_generate(user_input, state):
                 "Content-Type": "application/json"
             },
             json={
-                "model": "qwen/qwen2.5:free",
-                "messages": [
-                    {"role": "user", "content": user_input}
-                ]
+    "model": "qwen/qwen2.5:free",
+    "messages": [
+        {"role": "system", "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."},
+        {"role": "user", "content": user_input}
+    ]
             },
             timeout=15
         )
