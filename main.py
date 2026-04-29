@@ -95,7 +95,7 @@ def ai_generate(user_input, state):
                 "Content-Type": "application/json"
             },
             json={
-    "model": "mistralai/mistral-7b-instruct",
+    "model": "openrouter/auto",
     "messages": [
         {"role": "system", "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."},
         {"role": "user", "content": user_input}
