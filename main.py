@@ -114,13 +114,14 @@ def ai_generate(user_input, state):
     # тема
     word = get_context_word() or get_memory_word()
 
-if not word:
-    return random.choice([
-        "Интересно, расскажи подробнее",
-        "Я не до конца понял, но звучит любопытно",
-        "Можешь объяснить чуть больше?"
-    ])
-parts.append(word)
+    if not word:
+        return random.choice([
+            "Интересно, расскажи подробнее",
+            "Я не до конца понял, но звучит любопытно",
+            "Можешь объяснить чуть больше?"
+        ])
+
+    parts.append(word)
 
     sentence = " ".join(parts)
 
