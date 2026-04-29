@@ -55,6 +55,7 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Бот запущен...")
+    app.run_polling(drop_pending_updates=True)
     app.run_polling()
 
 
