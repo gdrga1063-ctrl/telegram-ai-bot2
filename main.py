@@ -89,19 +89,26 @@ def get_memory_word():
 def ai_generate(user_input, state):
     try:
         response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
-                "Content-Type": "application/json"
+    "https://api.groq.com/openai/v1/chat/completions",
+    headers={
+        "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+        "Content-Type": "application/json"
+    },
+    json={
+        "model": "qwen/qwen3-32b",
+        "messages": [
+            {
+                "role": "system",
+                "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."
             },
-            json={
-    "model": "openrouter/auto",
-    "messages": [
-        {"role": "system", "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."},
-        {"role": "user", "content": user_input}
-    ]
-            },
-            timeout=15
+            {
+                "role": "user",
+                "content": user_input
+            }
+        ]
+    },
+    timeout=15
+)
         )
 
         print("STATUS:", response.status_code)
