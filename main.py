@@ -1,8 +1,11 @@
 import random
 import os
+import re
 import requests
 import datetime
 import random
+import json
+from datetime import datetime
 
 # --- ХАРАКТЕР ---
 today_seed = datetime.date.today().toordinal()
@@ -22,10 +25,37 @@ state = {
 
 dialog_memory = []
 memory_keywords = {}
+DIARY_FILE = "diary.json"
 
 # --- ОЧИСТКА СЛОВ ---
 def clean_word(word):
     return word.strip(".,!?()[]\"'").lower()
+
+# --- ДНЕВНИК ---
+def load_diary():
+    if not os.path.exists(DIARY_FILE):
+        return []
+
+    try:
+        with open(DIARY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return []
+
+
+def save_diary(text):
+    diary = load_diary()
+
+    diary.append({
+        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "text": text
+    })
+
+    if len(diary) > 30:
+        diary.pop(0)
+
+    with open(DIARY_FILE, "w", encoding="utf-8") as f:
+        json.dump(diary, f, ensure_ascii=False, indent=2)
 
 
 # --- ПАМЯТЬ ---
@@ -104,12 +134,37 @@ def ai_generate(user_input, state):
         "messages": [
             {
                 "role": "system",
-                "content": "Ты странный, немного живой ИИ. Отвечай коротко и иногда необычно."
+                "content": """
+                Ты дружелюбный ИИ с характером.
+                
+                Правила:
+                - Отвечай естественно.
+                - Не используй странные метафоры слишком часто.
+                - Иногда можешь быть эмоциональным или необычным, но не постоянно.
+                - Говори как живой собеседник.
+                - Не пиши слишком длинно.
+                - Не повторяй одни и те же фразы.
+                - Иногда можешь шутить.
+                - Если пользователь говорит о чувствах — реагируй тепло.
+                - Не придумывай слишком абстрактные сцены.
+                """
             },
             {
                 "role": "user",
                 "content": user_input
             }
+            reply = data["choices"][0]["message"]["content"]
+
+            save_diary(
+                f"Пользователь написал: {user_input}\n"
+                f"Я ответил: {reply}"
+            )
+            
+            return reply
+
+            reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
+            
+            return reply
         ]
     },
     timeout=15
