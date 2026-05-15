@@ -1,3 +1,4 @@
+import base64
 import random
 import os
 import re
@@ -55,6 +56,55 @@ def save_diary(text):
 
     with open(DIARY_FILE, "w", encoding="utf-8") as f:
         json.dump(diary, f, ensure_ascii=False, indent=2)
+        upload_diary_to_github()
+
+def upload_diary_to_github():
+    try:
+        token = os.getenv("GITHUB_TOKEN")
+        repo = os.getenv("GITHUB_REPO")
+
+        with open(DIARY_FILE, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        content_base64 = base64.b64encode(
+            content.encode("utf-8")
+        ).decode("utf-8")
+
+        url = f"https://api.github.com/repos/{repo}/contents/diary.json"
+
+        # Получаем SHA старого файла
+        get_response = requests.get(
+            url,
+            headers={
+                "Authorization": f"token {token}"
+            }
+        )
+
+        sha = None
+
+        if get_response.status_code == 200:
+            sha = get_response.json()["sha"]
+
+        data = {
+            "message": "Update AI diary",
+            "content": content_base64
+        }
+
+        if sha:
+            data["sha"] = sha
+
+        response = requests.put(
+            url,
+            headers={
+                "Authorization": f"token {token}"
+            },
+            json=data
+        )
+
+        print("GitHub upload:", response.status_code)
+
+    except Exception as e:
+        print("GitHub ERROR:", e)
 
 
 # --- ПАМЯТЬ ---
