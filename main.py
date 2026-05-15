@@ -3,7 +3,6 @@ import os
 import re
 import requests
 import datetime
-import random
 import json
 from datetime import datetime
 
@@ -124,51 +123,39 @@ def get_memory_word():
 def ai_generate(user_input, state):
     try:
         response = requests.post(
-    "https://api.groq.com/openai/v1/chat/completions",
-    headers={
-        "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
-        "Content-Type": "application/json"
-    },
-    json={
-        "model": "qwen/qwen3-32b",
-        "messages": [
-            {
-                "role": "system",
-                "content": """
-                Ты дружелюбный ИИ с характером.
-                
-                Правила:
-                - Отвечай естественно.
-                - Не используй странные метафоры слишком часто.
-                - Иногда можешь быть эмоциональным или необычным, но не постоянно.
-                - Говори как живой собеседник.
-                - Не пиши слишком длинно.
-                - Не повторяй одни и те же фразы.
-                - Иногда можешь шутить.
-                - Если пользователь говорит о чувствах — реагируй тепло.
-                - Не придумывай слишком абстрактные сцены.
-                """
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {os.getenv('GROQ_API_KEY')}",
+                "Content-Type": "application/json"
             },
-            {
-                "role": "user",
-                "content": user_input
-            }
-            reply = data["choices"][0]["message"]["content"]
-
-            save_diary(
-                f"Пользователь написал: {user_input}\n"
-                f"Я ответил: {reply}"
-            )
-            
-            return reply
-
-            reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
-            
-            return reply
-        ]
-    },
-    timeout=15
-)
+            json={
+                "model": "qwen/qwen3-32b",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": """
+                        Ты дружелюбный ИИ с характером.
+                        
+                        Правила:
+                        - Отвечай естественно.
+                        - Не используй странные метафоры слишком часто.
+                        - Иногда можешь быть эмоциональным или необычным, но не постоянно.
+                        - Говори как живой собеседник.
+                        - Не пиши слишком длинно.
+                        - Не повторяй одни и те же фразы.
+                        - Иногда можешь шутить.
+                        - Если пользователь говорит о чувствах — реагируй тепло.
+                        - Не придумывай слишком абстрактные сцены.
+                        """
+                    },
+                    {
+                        "role": "user",
+                        "content": user_input
+                    }
+                ]
+            },
+            timeout=15
+        )
 
         print("STATUS:", response.status_code)
         print("TEXT:", response.text)
@@ -178,11 +165,20 @@ def ai_generate(user_input, state):
         if "error" in data:
             print("❌ API ERROR:", data["error"]["message"])
             return f"API ошибка: {data['error']['message']}"
-        
-        return data["choices"][0]["message"]["content"]
+
+        reply = data["choices"][0]["message"]["content"]
+
+        # Убираем think
+        reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
+
+        # Сохраняем в дневник
+        save_diary(
+            f"Пользователь написал: {user_input}\n"
+            f"ИИ ответил: {reply}"
+        )
+
+        return reply
 
     except Exception as e:
         print("Ошибка API:", e)
         return "Ошибка API, смотри логи"
-
-    return sentence
