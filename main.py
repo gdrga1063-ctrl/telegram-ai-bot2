@@ -2,12 +2,12 @@ import random
 import os
 import re
 import requests
-import datetime
 import json
-from datetime import datetime
+
+from datetime import datetime, date
 
 # --- ХАРАКТЕР ---
-today_seed = datetime.date.today().toordinal()
+today_seed = date.today().toordinal()
 random.seed(today_seed)
 
 personality = {
@@ -92,6 +92,9 @@ def update_state(state, user_input):
 
     state["mood"] = max(-1, min(1, state["mood"]))
     state["interest"] = max(0, min(1, state["interest"]))
+
+    print("MOOD:", state["mood"])
+    print("INTEREST:", state["interest"])
 
 
 # --- ВСПОМОГАТЕЛЬНОЕ ---
