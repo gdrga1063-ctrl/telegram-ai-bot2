@@ -109,7 +109,6 @@ def ai_generate(user_input, state):
     },
     timeout=15
 )
-        )
 
         print("STATUS:", response.status_code)
         print("TEXT:", response.text)
