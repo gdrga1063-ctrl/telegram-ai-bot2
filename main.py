@@ -1,8 +1,13 @@
 import random
 import os
 import requests
+import datetime
+import random
 
 # --- ХАРАКТЕР ---
+today_seed = datetime.date.today().toordinal()
+random.seed(today_seed)
+
 personality = {
     "curiosity": random.uniform(0.4, 0.9),
     "talkativeness": random.uniform(0.4, 0.9),
