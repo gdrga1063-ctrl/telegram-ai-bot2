@@ -56,7 +56,8 @@ def save_diary(text):
 
     with open(DIARY_FILE, "w", encoding="utf-8") as f:
         json.dump(diary, f, ensure_ascii=False, indent=2)
-        upload_diary_to_github()
+        
+    upload_diary_to_github()
 
 def upload_diary_to_github():
     try:
