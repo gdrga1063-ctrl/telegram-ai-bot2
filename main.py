@@ -43,74 +43,25 @@ def load_diary():
         return []
 
 
-def save_diary(text):
-    diary = load_diary()
-
-    diary.append({
+def save_diary(user_input, reply):
+    entry = {
         "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "text": text
-    })
+        "user": user_input,
+        "reply": reply
+    }
+
+    # локально
+    diary = load_diary()
+    diary.append(entry)
 
     if len(diary) > 30:
         diary.pop(0)
 
     with open(DIARY_FILE, "w", encoding="utf-8") as f:
         json.dump(diary, f, ensure_ascii=False, indent=2)
-        
-    upload_diary_to_github()
 
-def upload_diary_to_github():
-    try:
-        token = os.getenv("GITHUB_TOKEN")
-        repo = os.getenv("GITHUB_REPO")
-
-        with open(DIARY_FILE, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        content_base64 = base64.b64encode(
-            content.encode("utf-8")
-        ).decode("utf-8")
-
-        url = f"https://api.github.com/repos/{repo}/contents/diary.json"
-
-        # Получаем SHA старого файла
-        get_response = requests.get(
-            url,
-            headers={
-                "Authorization": f"token {token}"
-            }
-        )
-
-        sha = None
-
-        if get_response.status_code == 200:
-            sha = get_response.json()["sha"]
-
-        data = {
-            "message": "Update AI diary",
-            "content": content_base64
-        }
-
-        if sha:
-            data["sha"] = sha
-
-        print("TOKEN:", token)
-        print("REPO:", repo)
-        print("URL:", url)
-        
-        response = requests.put(
-            url,
-            headers={
-                "Authorization": f"token {token}"
-            },
-            json=data
-        )
-
-        print("GitHub upload:", response.status_code)
-        print("GitHub response:", response.text)
-
-    except Exception as e:
-        print("GitHub ERROR:", e)
+    # GitHub
+    update_github_diary(entry)
 
 
 # --- ПАМЯТЬ ---
@@ -231,10 +182,7 @@ def ai_generate(user_input, state):
         reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
 
         # Сохраняем в дневник
-        save_diary(
-            f"Пользователь: {user_input}\n"
-            f"ИИ: {reply}"
-        )
+        save_diary(user_input, reply)
 
         return reply
 
