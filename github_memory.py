@@ -2,21 +2,27 @@ from github import Github
 import os
 import json
 
+print("TOKEN:", TOKEN)
+print("REPO_NAME:", REPO_NAME)
+
 TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_NAME = "Arslan1063/MyTelegramAI_UwU"
 
 g = Github(TOKEN)
-repo = g.get_repo(REPO_NAME)
 
 FILE_PATH = "diary.json"
 
 
 def update_github_diary(entry):
     try:
+        repo = g.get_repo(REPO_NAME)
+
         try:
             file = repo.get_contents(FILE_PATH)
 
-            content = json.loads(file.decoded_content.decode())
+            content = json.loads(
+                file.decoded_content.decode()
+            )
 
         except:
             content = []
@@ -36,6 +42,7 @@ def update_github_diary(entry):
                 new_content,
                 file.sha
             )
+
         except:
             repo.create_file(
                 FILE_PATH,
