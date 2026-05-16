@@ -5,9 +5,6 @@ import json
 TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_NAME = "Arslan1063/MyTelegramAI_UwU"
 
-print("TOKEN:", TOKEN)
-print("REPO_NAME:", REPO_NAME)
-
 g = Github(TOKEN)
 
 FILE_PATH = "diary.json"
