@@ -57,7 +57,5 @@ def main():
     print("Бот запущен...")
     app.run_polling(drop_pending_updates=True)
 
-print("API KEY:", os.getenv("GROQ_API_KEY"))
-
 if __name__ == "__main__":
     main()
