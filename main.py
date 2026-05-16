@@ -94,6 +94,10 @@ def upload_diary_to_github():
         if sha:
             data["sha"] = sha
 
+        print("TOKEN:", token)
+        print("REPO:", repo)
+        print("URL:", url)
+        
         response = requests.put(
             url,
             headers={
