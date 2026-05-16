@@ -5,6 +5,7 @@ import re
 import requests
 import json
 
+from github_memory import update_github_diary
 from datetime import datetime, date
 
 # --- ХАРАКТЕР ---
