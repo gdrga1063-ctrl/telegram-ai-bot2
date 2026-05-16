@@ -2,11 +2,11 @@ from github import Github
 import os
 import json
 
-print("TOKEN:", TOKEN)
-print("REPO_NAME:", REPO_NAME)
-
 TOKEN = os.getenv("GITHUB_TOKEN")
 REPO_NAME = "Arslan1063/MyTelegramAI_UwU"
+
+print("TOKEN:", TOKEN)
+print("REPO_NAME:", REPO_NAME)
 
 g = Github(TOKEN)
 
