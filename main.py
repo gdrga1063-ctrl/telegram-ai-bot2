@@ -226,10 +226,12 @@ def ai_generate(user_input, state):
         reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
 
         # Сохраняем в дневник
-        save_diary(
-            f"Пользователь написал: {user_input}\n"
-            f"ИИ ответил: {reply}"
-        )
+        entry = {
+            "user": user_input,
+            "reply": reply
+        }
+    
+        update_github_diary(entry)
 
         return reply
 
