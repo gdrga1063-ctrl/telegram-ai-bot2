@@ -102,6 +102,7 @@ def upload_diary_to_github():
         )
 
         print("GitHub upload:", response.status_code)
+        print("GitHub response:", response.text)
 
     except Exception as e:
         print("GitHub ERROR:", e)
