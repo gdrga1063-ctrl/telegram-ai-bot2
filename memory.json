@@ -2,7 +2,7 @@
   "brain": {
     "mood": 0.0,
     "interest": 0.5,
-    "loneliness": 0.0,
+    "loneliness": 0,
     "attachment": 0.0,
     "energy": 1.0
   },
