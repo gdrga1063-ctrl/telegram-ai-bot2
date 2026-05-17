@@ -93,5 +93,3 @@ def update_github_memory(brain, memory):
     except Exception as e:
         print("Ошибка GitHub:", e)
 
-    except Exception as e:
-        print("Ошибка GitHub memory:", e)
