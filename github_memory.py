@@ -8,6 +8,7 @@ REPO_NAME = "gdrga1063-ctrl/telegram-ai-bot2"
 g = Github(TOKEN)
 
 FILE_PATH = "diary.json"
+FILE_PATH = "memory.json"
 
 
 def update_github_diary(entry):
@@ -54,3 +55,40 @@ def update_github_diary(entry):
 
     except Exception as e:
         print("Ошибка GitHub:", e)
+
+def update_github_memory(brain, memory):
+    try:
+        repo = g.get_repo(REPO_NAME)
+
+        data = {
+            "brain": brain,
+            "memory": memory
+        }
+
+        new_content = json.dumps(
+            data,
+            ensure_ascii=False,
+            indent=2
+        )
+
+        try:
+            file = repo.get_contents(FILE_PATH)
+
+            repo.update_file(
+                FILE_PATH,
+                "Обновление памяти ИИ",
+                new_content,
+                file.sha
+            )
+
+        except Exception:
+            repo.create_file(
+                FILE_PATH,
+                "Создание памяти ИИ",
+                new_content
+            )
+
+        print("memory.json обновлен")
+
+    except Exception as e:
+        print("Ошибка GitHub memory:", e)
