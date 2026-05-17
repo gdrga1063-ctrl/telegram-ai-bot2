@@ -16,12 +16,13 @@ def update_github_diary(entry):
 
         try:
             file = repo.get_contents(FILE_PATH)
-
+        
             content = json.loads(
                 file.decoded_content.decode()
             )
 
-        except:
+        except Exception as e:
+            print("Ошибка чтения diary.json:", e)
             content = []
 
         content.append(entry)
@@ -40,7 +41,9 @@ def update_github_diary(entry):
                 file.sha
             )
 
-        except:
+        except Exception as e:
+            print("Ошибка update_file:", e)
+
             repo.create_file(
                 FILE_PATH,
                 "Создание дневника ИИ",
