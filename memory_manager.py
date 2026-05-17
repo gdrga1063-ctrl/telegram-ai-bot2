@@ -3,6 +3,8 @@ import os
 import random
 from datetime import datetime
 
+from github_memory import update_github_memory
+
 MEMORY_FILE = "memory.json"
 
 # --- БАЗОВОЕ СОСТОЯНИЕ ---
