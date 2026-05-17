@@ -58,7 +58,7 @@ def save_memory():
             indent=2
         )
         
-    update_github_memory(brain, memory)
+   # update_github_memory(brain, memory)
 
 # --- СОХРАНЕНИЕ ДИАЛОГА ---
 def remember_dialogue(user_input, reply):
