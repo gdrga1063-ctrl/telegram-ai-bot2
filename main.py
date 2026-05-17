@@ -8,6 +8,18 @@ import json
 from github_memory import update_github_diary
 from datetime import datetime, date
 
+from memory_manager import (
+    brain,
+    load_memory,
+    save_memory,
+    remember_dialogue,
+    update_brain,
+    get_memory_context,
+)
+
+# --- ЧТЕНИЕ ПАМЯТИ ---
+load_memory()
+
 # --- ХАРАКТЕР ---
 today_seed = date.today().toordinal()
 random.seed(today_seed)
@@ -16,12 +28,6 @@ personality = {
     "curiosity": random.uniform(0.4, 0.9),
     "talkativeness": random.uniform(0.4, 0.9),
     "emotionality": random.uniform(0.3, 0.8),
-}
-
-# --- СОСТОЯНИЕ ---
-state = {
-    "mood": 0.0,
-    "interest": 0.5,
 }
 
 dialog_memory = []
@@ -143,10 +149,19 @@ def ai_generate(user_input, state):
                 "model": "qwen/qwen3-32b",
                 "messages": [
                     {
-                        "role": "system",
-                        "content": """
-                        Ты дружелюбный ИИ с характером.
+                        {
+                            "role": "system",
+                            "content": f"""
+                            Ты дружелюбный ИИ с характером.
                         
+                            Твое текущее состояние:
+                            mood = {brain["mood"]}
+                            interest = {brain["interest"]}
+                            loneliness = {brain["loneliness"]}
+                        
+                            Последние воспоминания:
+                            {get_memory_context()}
+                    
                         Правила:
                         - Отвечай естественно.
                         - Не используй странные метафоры слишком часто.
@@ -183,6 +198,7 @@ def ai_generate(user_input, state):
         reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
 
         # Сохраняем в дневник
+        remember_dialogue(user_input, reply)
         save_diary(user_input, reply)
 
         return reply
