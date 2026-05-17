@@ -10,7 +10,7 @@ from telegram.ext import (
     filters,
 )
 
-from main import ai_generate, state, remember, update_state, dialog_memory
+from main import ai_generate, dialog_memory
 from memory_manager import update_brain
 
 # --- ТОКЕН ---
@@ -26,7 +26,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         update_brain(user_input)
 
-        reply = ai_generate(user_input, state)
+        reply = ai_generate(user_input)
 
         if not reply:
             reply = "..."
