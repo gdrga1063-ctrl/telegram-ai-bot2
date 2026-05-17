@@ -3,7 +3,7 @@ import os
 import json
 
 TOKEN = os.getenv("GITHUB_TOKEN")
-REPO_NAME = "Arslan1063/MyTelegramAI_UwU"
+REPO_NAME = "gdrga1063-ctrl/telegram-ai-bot2"
 
 g = Github(TOKEN)
 
