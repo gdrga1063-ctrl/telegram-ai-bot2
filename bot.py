@@ -11,6 +11,7 @@ from telegram.ext import (
 )
 
 from main import ai_generate, state, remember, update_state, dialog_memory
+from memory_manager import update_brain
 
 # --- ТОКЕН ---
 TOKEN = os.getenv("BOT_TOKEN")
@@ -23,8 +24,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         user_input = update.message.text
 
-        remember(user_input)
-        update_state(state, user_input)
+        update_brain(user_input)
 
         reply = ai_generate(user_input, state)
 
