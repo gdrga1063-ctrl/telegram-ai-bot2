@@ -31,7 +31,6 @@ personality = {
 }
 
 dialog_memory = []
-memory_keywords = {}
 DIARY_FILE = "diary.json"
 
 # --- ОЧИСТКА СЛОВ ---
@@ -70,47 +69,6 @@ def save_diary(user_input, reply):
     # GitHub
     update_github_diary(entry)
 
-
-# --- ПАМЯТЬ ---
-def remember(user_input):
-    global dialog_memory
-
-    dialog_memory.append(user_input)
-    if len(dialog_memory) > 6:
-        dialog_memory.pop(0)
-
-    for word in user_input.split():
-        word = clean_word(word)
-
-        if len(word) > 4:
-            memory_keywords[word] = memory_keywords.get(word, 0) + 1
-
-    # забывание
-    for word in list(memory_keywords.keys()):
-        memory_keywords[word] *= 0.9
-        if memory_keywords[word] < 0.3:
-            del memory_keywords[word]
-
-
-# --- СОСТОЯНИЕ ---
-def update_state(state, user_input):
-    text = user_input.lower()
-
-    if "привет" in text:
-        state["mood"] += 0.2
-        state["interest"] += 0.2
-    elif "плохо" in text:
-        state["mood"] -= 0.3
-    else:
-        state["mood"] -= 0.02
-
-    state["mood"] = max(-1, min(1, state["mood"]))
-    state["interest"] = max(0, min(1, state["interest"]))
-
-    print("MOOD:", state["mood"])
-    print("INTEREST:", state["interest"])
-
-
 # --- ВСПОМОГАТЕЛЬНОЕ ---
 def get_context_word():
     if not dialog_memory:
@@ -128,16 +86,8 @@ def get_context_word():
 
     return random.choice(words) if words else None
 
-
-def get_memory_word():
-    if not memory_keywords:
-        return None
-
-    return random.choice(list(memory_keywords.keys()))
-
-
 # --- ГЕНЕРАЦИЯ ---
-def ai_generate(user_input, state):
+def ai_generate(user_input):
     try:
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
