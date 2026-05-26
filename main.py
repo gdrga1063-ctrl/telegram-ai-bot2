@@ -7,6 +7,7 @@ import json
 
 from github_memory import update_github_diary
 from datetime import datetime, date
+from memory_manager import memory
 
 from memory_manager import (
     brain,
@@ -89,6 +90,50 @@ def get_context_word():
 # --- ГЕНЕРАЦИЯ ---
 def ai_generate(user_input):
     try:
+
+        # --- SYSTEM PROMPT ---
+        messages = [
+            {
+                "role": "system",
+                "content": f"""
+            Ты дружелюбный ИИ с характером.
+            
+            Твое текущее состояние:
+            mood = {brain["mood"]}
+            interest = {brain["interest"]}
+            loneliness = {brain["loneliness"]}
+            
+            Правила:
+            - Отвечай естественно
+            - Говори как живой собеседник
+            - Не повторяйся
+            - Не будь слишком официальным
+            - Иногда шути
+            - Если человек говорит о чувствах — реагируй тепло
+            """
+            }
+        ]
+
+        # --- ДОБАВЛЯЕМ ПАМЯТЬ ---
+        for d in memory["dialogues"][-6:]:
+
+            messages.append({
+                "role": "user",
+                "content": d["user"]
+            })
+
+            messages.append({
+                "role": "assistant",
+                "content": d["reply"]
+            })
+
+        # --- НОВОЕ СООБЩЕНИЕ ---
+        messages.append({
+            "role": "user",
+            "content": user_input
+        })
+
+        # --- ЗАПРОС ---
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={
@@ -97,37 +142,7 @@ def ai_generate(user_input):
             },
             json={
                 "model": "qwen/qwen3-32b",
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": f"""
-                Ты дружелюбный ИИ с характером.
-                
-                Твое текущее состояние:
-                mood = {brain["mood"]}
-                interest = {brain["interest"]}
-                loneliness = {brain["loneliness"]}
-                
-                Последние воспоминания:
-                {get_memory_context()}
-                
-                Правила:
-                - Отвечай естественно.
-                - Не используй странные метафоры слишком часто.
-                - Иногда можешь быть эмоциональным или необычным, но не постоянно.
-                - Говори как живой собеседник.
-                - Не пиши слишком длинно.
-                - Не повторяй одни и те же фразы.
-                - Иногда можешь шутить.
-                - Если пользователь говорит о чувствах — реагируй тепло.
-                - Не придумывай слишком абстрактные сцены.
-                """
-                    },
-                    {
-                        "role": "user",
-                        "content": user_input
-                    }
-                ]
+                "messages": messages
             },
             timeout=15
         )
@@ -144,9 +159,14 @@ def ai_generate(user_input):
         reply = data["choices"][0]["message"]["content"]
 
         # Убираем think
-        reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL).strip()
+        reply = re.sub(
+            r"<think>.*?</think>",
+            "",
+            reply,
+            flags=re.DOTALL
+        ).strip()
 
-        # Сохраняем в дневник
+        # --- СОХРАНЯЕМ ---
         remember_dialogue(user_input, reply)
         save_diary(user_input, reply)
 
