@@ -8,6 +8,7 @@ import json
 from github_memory import update_github_diary
 from datetime import datetime, date
 from memory_manager import memory
+from memory_manager import process_user_input
 
 from memory_manager import (
     brain,
@@ -89,6 +90,9 @@ def get_context_word():
 
 # --- ГЕНЕРАЦИЯ ---
 def ai_generate(user_input):
+    
+    process_user_input(user_input)
+    
     try:
 
         # --- SYSTEM PROMPT ---
@@ -102,6 +106,9 @@ def ai_generate(user_input):
             mood = {brain["mood"]}
             interest = {brain["interest"]}
             loneliness = {brain["loneliness"]}
+
+            Известные факты о пользователе:
+            {memory["facts_about_user"]}
             
             Правила:
             - Отвечай естественно
