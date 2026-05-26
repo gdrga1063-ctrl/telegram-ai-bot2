@@ -18,11 +18,47 @@ brain = {
 
 # --- ПАМЯТЬ ---
 memory = {
+    # последние диалоги
     "dialogues": [],
-    "important_topics": {},
+
+    # факты о пользователе
+    "facts_about_user": [],
+
+    # важные воспоминания
+    "important_memories": [],
+
+    # мысли
     "thoughts": []
 }
 
+# --- СОХРАНЕНИЕ ФАКТОВ ---
+def remember_fact(fact):
+    
+    if fact not in memory["facts_about_user"]:
+        memory["facts_about_user"].append(fact)
+
+    # ограничение
+    if len(memory["facts_about_user"]) > 50:
+        memory["facts_about_user"].pop(0)
+
+    save_memory()
+
+# --- ПРОСТОЕ РАСПОЗНОВАНИЕ ФАКТОВ ---
+def process_user_input(user_input):
+
+    text = user_input.lower()
+
+    if "меня зовут" in text:
+        remember_fact(user_input)
+
+    if "я люблю" in text:
+        remember_fact(user_input)
+
+    if "я делаю" in text:
+        remember_fact(user_input)
+
+    if "я создаю" in text:
+        remember_fact(user_input)
 
 # --- ЗАГРУЗКА ---
 def load_memory():
