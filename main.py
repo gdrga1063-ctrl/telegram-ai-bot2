@@ -90,7 +90,6 @@ def get_context_word():
 
 # --- ГЕНЕРАЦИЯ ---
 def ai_generate(user_input):
-    
     process_user_input(user_input)
     
     try:
